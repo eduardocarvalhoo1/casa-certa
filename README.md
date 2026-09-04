@@ -139,36 +139,5 @@ O projeto possui protótipos das principais telas da aplicação:
 
 ---
 
-## Direção visual
 
-O projeto utiliza uma interface inspirada em aplicações financeiras modernas, buscando transmitir:
-
-- Clareza;
-- Simplicidade;
-- Segurança;
-- Organização;
-- Facilidade de uso.
-
-A identidade visual utiliza cores neutras e uma interface limpa para facilitar a visualização dos dados financeiros.
-
----
-
-## Tecnologias
-
-O projeto está sendo desenvolvido utilizando:
-
-- **Java**
-- **Spring Boot**
-- **React**
-- **HTML5**
-- **CSS3**
-- **JavaScript**
-- **Git**
-- **GitHub**
-
-### Arquitetura
-
-O sistema utiliza uma **arquitetura monolítica**, concentrando as principais funcionalidades da aplicação em um único projeto.
-
-A aplicação é dividida entre frontend e backend, permitindo a comunicação entre a interface do usuário e as regras de negócio responsáveis pelos cálculos e simulações.
 

@@ -10,7 +10,7 @@ services:
       MYSQL_USER: casacerta_user
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "${DB_PORT:-3307}:3306"
+      - "${DB_PORT:-3306}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 

@@ -1,14 +1,42 @@
-const app = require('./src/app');
+
 require('dotenv').config();
+
+const app = require('./src/app');
+const { sequelize, connectDB } = require('./src/config/database');
+
+// Registra o model antes de sincronizar as tabelas
+require('./src/models/User');
 
 const PORT = process.env.PORT || 3000;
 
-const server = app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-  console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
-});
+async function startServer() {
+  try {
+    await connectDB();
+    await sequelize.sync();
 
-process.on('SIGINT', () => {
-  console.log('\n Encerrando servidor...');
-  server.close(() => process.exit(0));
-});
+    console.log('Modelos sincronizados com o banco de dados.');
+
+    const server = app.listen(PORT, () => {
+      console.log(`Servidor rodando na porta ${PORT}`);
+      console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
+    });
+
+    process.on('SIGINT', () => {
+      console.log('\nEncerrando servidor...');
+
+      server.close(() => {
+        console.log('Servidor encerrado.');
+        process.exit(0);
+      });
+    });
+  } catch (error) {
+    console.error(
+      'Não foi possível iniciar o servidor:',
+      error.message
+    );
+
+    process.exitCode = 1;
+  }
+}
+
+startServer();

@@ -1,19 +1,29 @@
-const app = require('./src/app');
+
 require('dotenv').config();
 
-const { connectDB } = require('./src/config/database');
+const app = require('./src/app');
+const { sequelize, connectDB } = require('./src/config/database');
+
+// Registra o model antes de sincronizar as tabelas
+require('./src/models/User');
+
+const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {
-    // Conecta ao MySQL antes de iniciar o servidor HTTP
+    // Testa a conexão com o MySQL
     await connectDB();
+
+    // Cria as tabelas que ainda não existem
+    await sequelize.sync();
+
+    console.log('Modelos sincronizados com o banco de dados.');
 
     const server = app.listen(PORT, () => {
       console.log(`Servidor rodando na porta ${PORT}`);
       console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
     });
 
-    // Encerramento organizado ao pressionar Ctrl+C
     process.on('SIGINT', () => {
       console.log('\nEncerrando servidor...');
 
@@ -22,11 +32,15 @@ async function startServer() {
         process.exit(0);
       });
     });
-
   } catch (error) {
-    console.error('Não foi possível iniciar o servidor:', error.message);
+    console.error(
+      'Não foi possível iniciar o servidor:',
+      error.message
+    );
+
     process.exitCode = 1;
   }
 }
 
 startServer();
+

@@ -1,8 +1,11 @@
 node_modules/
 
+.env
+
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 tasks.md
+

@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 const userRoutes = require('./routes/UserRoutes');
 
 
@@ -11,6 +13,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: { defaultModelsExpandDepth: -1 },
+  })
+);
 app.use('/users', userRoutes);
 
 app.get('/health', (req, res) => {

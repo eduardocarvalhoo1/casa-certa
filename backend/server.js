@@ -4,8 +4,7 @@ require('dotenv').config();
 const app = require('./src/app');
 const { sequelize, connectDB } = require('./src/config/database');
 
-// Registra o model antes de sincronizar as tabelas
-require('./src/models/User');
+require('./src/models');
 
 const PORT = process.env.PORT || 3000;
 

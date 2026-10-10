@@ -1,12 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-/**
- * Recommendation
- * Resultado do scoring ponderado por objetivo de uma simulação.
- * `recommendedOption` indica a melhor opção (ex.: FINANCING ou CONSORTIUM).
- * Os pesos aplicados ficam serializados como JSON string.
- */
 const Recommendation = sequelize.define(
   'Recommendation',
   {
@@ -31,13 +25,11 @@ const Recommendation = sequelize.define(
       allowNull: false,
     },
 
-    // Pesos aplicados ao financiamento, como JSON string
     financingWeights: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
 
-    // Pesos aplicados ao consórcio, como JSON string
     consortiumWeights: {
       type: DataTypes.TEXT,
       allowNull: false,

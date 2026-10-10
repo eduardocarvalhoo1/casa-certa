@@ -1,11 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-/**
- * FinancingResult
- * Resultado do cálculo de financiamento (SAC ou PRICE) de uma simulação.
- * `evolution` guarda o array de parcelas serializado como JSON string.
- */
 const FinancingResult = sequelize.define(
   'FinancingResult',
   {

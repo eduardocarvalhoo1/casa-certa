@@ -11,10 +11,9 @@ const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {
-    // Testa a conexão com o MySQL
+    
     await connectDB();
 
-    // Cria as tabelas que ainda não existem
     await sequelize.sync();
 
     console.log('Modelos sincronizados com o banco de dados.');

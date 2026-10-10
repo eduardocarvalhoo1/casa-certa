@@ -1,12 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-/**
- * Simulation
- * Representa uma simulação criada por um usuário, agregando os dados de
- * entrada do imóvel e os parâmetros gerais. Os resultados de financiamento,
- * consórcio e a recomendação ficam em tabelas associadas (1-1).
- */
 const Simulation = sequelize.define(
   'Simulation',
   {
@@ -24,13 +18,11 @@ const Simulation = sequelize.define(
       },
     },
 
-    // Objetivo da simulação (ex.: COMPRAR_IMOVEL, INVESTIR, REFINANCIAR)
     objective: {
       type: DataTypes.STRING(50),
       allowNull: false,
     },
 
-    // Sistema de amortização do financiamento escolhido: SAC ou PRICE
     system: {
       type: DataTypes.STRING(10),
       allowNull: false,

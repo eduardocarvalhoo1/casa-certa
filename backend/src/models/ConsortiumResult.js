@@ -1,12 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-/**
- * ConsortiumResult
- * Resultado do cálculo de consórcio de uma simulação. O lance inicial, quando
- * informado, reduz o prazo — refletido em `estimatedTermWithBid`.
- * `evolution` guarda o array do saldo devedor serializado como JSON string.
- */
 const ConsortiumResult = sequelize.define(
   'ConsortiumResult',
   {
@@ -31,13 +25,11 @@ const ConsortiumResult = sequelize.define(
       allowNull: false,
     },
 
-    // Prazo estimado considerando o lance (= prazo original se sem lance)
     estimatedTermWithBid: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
 
-    // Array de { month, payment, balance } como JSON string
     evolution: {
       type: DataTypes.TEXT,
       allowNull: false,

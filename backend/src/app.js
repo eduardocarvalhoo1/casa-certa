@@ -3,6 +3,7 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const userRoutes = require('./routes/UserRoutes');
+const authRoutes = require('./routes/AuthRoutes');
 
 
 require('dotenv').config();
@@ -21,6 +22,7 @@ app.use(
   })
 );
 app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date() });

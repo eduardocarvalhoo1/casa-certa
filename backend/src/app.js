@@ -3,6 +3,7 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const userRoutes = require('./routes/UserRoutes');
+const simulationRoutes = require('./routes/simulationRoutes');
 const authRoutes = require('./routes/AuthRoutes');
 
 
@@ -22,6 +23,7 @@ app.use(
   })
 );
 app.use('/users', userRoutes);
+app.use('/api/simulations', simulationRoutes);
 app.use('/auth', authRoutes);
 
 app.get('/health', (req, res) => {

@@ -156,6 +156,22 @@ const options = {
           },
         },
 
+        SimulationSummary: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', example: 1 },
+            name: { type: 'string', example: 'Apartamento Centro' },
+            objective: { type: 'string', example: 'COMPRAR_IMOVEL' },
+            propertyValue: { type: 'number', example: 300000 },
+            createdAt: { type: 'string', format: 'date-time' },
+            recommendedOption: {
+              type: 'string',
+              enum: ['FINANCING', 'CONSORTIUM'],
+              example: 'FINANCING',
+            },
+          },
+        },
+
         // ---- Usuário ----
         UserInput: {
           type: 'object',

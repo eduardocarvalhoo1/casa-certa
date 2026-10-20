@@ -1,6 +1,9 @@
 const simulationService = require('../services/simulationService');
-const { SimulationValidationError } = require('../services/simulationService');
-const { validateSimulationInput } = require('../utils/validation');
+const {
+  SimulationValidationError,
+  SimulationNotFoundError,
+} = require('../services/simulationService');
+const { validateSimulationInput, isPositiveInteger } = require('../utils/validation');
 const response = require('../utils/response');
 
 async function createSimulation(req, res) {
@@ -24,4 +27,42 @@ async function createSimulation(req, res) {
   }
 }
 
-module.exports = { createSimulation };
+async function listSimulations(req, res) {
+  const userId = Number(req.query.userId);
+  if (!isPositiveInteger(userId)) {
+    return response.badRequest(res, 'O parâmetro "userId" é obrigatório e deve ser um inteiro positivo.');
+  }
+
+  try {
+    const simulations = await simulationService.listSimulations(userId);
+    return response.success(res, 200, simulations);
+  } catch (err) {
+    console.error('Erro ao listar simulações:', err);
+    return response.serverError(res, 'Erro interno ao listar simulações.');
+  }
+}
+
+async function getSimulation(req, res) {
+  const id = Number(req.params.id);
+  const userId = Number(req.query.userId);
+
+  if (!isPositiveInteger(id)) {
+    return response.badRequest(res, 'O parâmetro "id" deve ser um inteiro positivo.');
+  }
+  if (!isPositiveInteger(userId)) {
+    return response.badRequest(res, 'O parâmetro "userId" é obrigatório e deve ser um inteiro positivo.');
+  }
+
+  try {
+    const result = await simulationService.getSimulation(id, userId);
+    return response.success(res, 200, result);
+  } catch (err) {
+    if (err instanceof SimulationNotFoundError) {
+      return response.notFound(res, err.message);
+    }
+    console.error('Erro ao buscar simulação:', err);
+    return response.serverError(res, 'Erro interno ao buscar simulação.');
+  }
+}
+
+module.exports = { createSimulation, listSimulations, getSimulation };

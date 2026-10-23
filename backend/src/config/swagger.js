@@ -19,11 +19,17 @@ const options = {
       },
     ],
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
       schemas: {
         SimulationInput: {
           type: 'object',
           required: [
-            'userId',
             'name',
             'objective',
             'system',
@@ -32,7 +38,6 @@ const options = {
             'consortium',
           ],
           properties: {
-            userId: { type: 'integer', example: 1 },
             name: { type: 'string', example: 'Apartamento Centro' },
             objective: {
               type: 'string',

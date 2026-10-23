@@ -1,7 +1,10 @@
 const express = require('express');
 const SimulationController = require('../controllers/simulationController');
+const authMiddleware = require('../middlewares/AuthMiddleware');
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 /**
  * @swagger
@@ -16,6 +19,8 @@ const router = express.Router();
  *   post:
  *     summary: Cria uma simulação (financiamento + consórcio + recomendação)
  *     tags: [Simulations]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -46,6 +51,8 @@ const router = express.Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Token ausente, inválido ou expirado.
  *       500:
  *         description: Erro interno ao criar simulação.
  *         content:
@@ -59,15 +66,10 @@ router.post('/', SimulationController.createSimulation);
  * @swagger
  * /api/simulations:
  *   get:
- *     summary: Lista o histórico de simulações de um usuário
+ *     summary: Lista o histórico de simulações do usuário autenticado
  *     tags: [Simulations]
- *     parameters:
- *       - in: query
- *         name: userId
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID do usuário dono das simulações.
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de simulações (resumo).
@@ -77,12 +79,8 @@ router.post('/', SimulationController.createSimulation);
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/SimulationSummary'
- *       400:
- *         description: Parâmetro userId ausente ou inválido.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Token ausente, inválido ou expirado.
  */
 router.get('/', SimulationController.listSimulations);
 
@@ -90,8 +88,10 @@ router.get('/', SimulationController.listSimulations);
  * @swagger
  * /api/simulations/{id}:
  *   get:
- *     summary: Detalha uma simulação (resultados + recomendação)
+ *     summary: Detalha uma simulação do usuário autenticado (resultados + recomendação)
  *     tags: [Simulations]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -99,12 +99,6 @@ router.get('/', SimulationController.listSimulations);
  *         schema:
  *           type: integer
  *         description: ID da simulação.
- *       - in: query
- *         name: userId
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID do usuário dono da simulação.
  *     responses:
  *       200:
  *         description: Detalhe da simulação.
@@ -122,11 +116,13 @@ router.get('/', SimulationController.listSimulations);
  *                 recommendation:
  *                   $ref: '#/components/schemas/Recommendation'
  *       400:
- *         description: Parâmetros inválidos.
+ *         description: Parâmetro id inválido.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Token ausente, inválido ou expirado.
  *       404:
  *         description: Simulação não encontrada.
  *         content:

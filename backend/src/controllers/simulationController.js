@@ -13,7 +13,10 @@ async function createSimulation(req, res) {
   }
 
   try {
-    const result = await simulationService.createSimulation(req.body);
+    const result = await simulationService.createSimulation({
+      ...req.body,
+      userId: req.user.id,
+    });
     return response.success(res, 201, result);
   } catch (err) {
     if (err instanceof SimulationValidationError) {
@@ -28,13 +31,8 @@ async function createSimulation(req, res) {
 }
 
 async function listSimulations(req, res) {
-  const userId = Number(req.query.userId);
-  if (!isPositiveInteger(userId)) {
-    return response.badRequest(res, 'O parâmetro "userId" é obrigatório e deve ser um inteiro positivo.');
-  }
-
   try {
-    const simulations = await simulationService.listSimulations(userId);
+    const simulations = await simulationService.listSimulations(req.user.id);
     return response.success(res, 200, simulations);
   } catch (err) {
     console.error('Erro ao listar simulações:', err);
@@ -44,17 +42,12 @@ async function listSimulations(req, res) {
 
 async function getSimulation(req, res) {
   const id = Number(req.params.id);
-  const userId = Number(req.query.userId);
-
   if (!isPositiveInteger(id)) {
     return response.badRequest(res, 'O parâmetro "id" deve ser um inteiro positivo.');
   }
-  if (!isPositiveInteger(userId)) {
-    return response.badRequest(res, 'O parâmetro "userId" é obrigatório e deve ser um inteiro positivo.');
-  }
 
   try {
-    const result = await simulationService.getSimulation(id, userId);
+    const result = await simulationService.getSimulation(id, req.user.id);
     return response.success(res, 200, result);
   } catch (err) {
     if (err instanceof SimulationNotFoundError) {

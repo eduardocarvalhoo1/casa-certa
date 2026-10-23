@@ -2,7 +2,6 @@ const { validateSimulationInput } = require('../src/utils/validation');
 
 function validBody(overrides = {}) {
   return {
-    userId: 1,
     name: 'Simulação Teste',
     objective: 'COMPRAR_IMOVEL',
     system: 'SAC',

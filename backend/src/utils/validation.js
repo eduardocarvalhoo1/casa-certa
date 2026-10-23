@@ -26,11 +26,7 @@ function validateSimulationInput(body) {
     return { valid: false, errors: ['O corpo da requisição é obrigatório.'] };
   }
 
-  const { userId, name, objective, system, propertyValue, financing, consortium } = body;
-
-  if (!isPositiveInteger(userId)) {
-    errors.push('O campo "userId" deve ser um inteiro positivo.');
-  }
+  const { name, objective, system, propertyValue, financing, consortium } = body;
 
   if (!isNonEmptyString(name)) {
     errors.push('O campo "name" é obrigatório.');

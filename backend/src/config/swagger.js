@@ -18,12 +18,23 @@ const options = {
         description: 'Servidor local de desenvolvimento',
       },
     ],
+    tags: [
+      { name: 'Users', description: 'Cadastro de usuários' },
+      { name: 'Auth', description: 'Autenticação de usuários' },
+      { name: 'Simulations', description: 'Simulações de financiamento e consórcio' },
+    ],
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
       schemas: {
         SimulationInput: {
           type: 'object',
           required: [
-            'userId',
             'name',
             'objective',
             'system',
@@ -32,7 +43,6 @@ const options = {
             'consortium',
           ],
           properties: {
-            userId: { type: 'integer', example: 1 },
             name: { type: 'string', example: 'Apartamento Centro' },
             objective: {
               type: 'string',
@@ -169,6 +179,24 @@ const options = {
               enum: ['FINANCING', 'CONSORTIUM'],
               example: 'FINANCING',
             },
+          },
+        },
+
+        // ---- Autenticação ----
+        LoginInput: {
+          type: 'object',
+          required: ['email', 'password'],
+          properties: {
+            email: { type: 'string', format: 'email', example: 'maria@email.com' },
+            password: { type: 'string', format: 'password', example: 'senhaSegura123' },
+          },
+        },
+        LoginResponse: {
+          type: 'object',
+          properties: {
+            message: { type: 'string', example: 'Login realizado com sucesso.' },
+            token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
+            user: { $ref: '#/components/schemas/User' },
           },
         },
 

@@ -19,7 +19,14 @@ app.use(
   '/api-docs',
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, {
-    swaggerOptions: { defaultModelsExpandDepth: -1 },
+    swaggerOptions: {
+      defaultModelsExpandDepth: -1,
+      persistAuthorization: true,
+      tagsSorter: (a, b) => {
+        const order = ['Users', 'Auth', 'Simulations'];
+        return order.indexOf(a) - order.indexOf(b);
+      },
+    },
   })
 );
 app.use('/users', userRoutes);

@@ -139,5 +139,97 @@ O projeto possui protótipos das principais telas da aplicação:
 
 ---
 
+## Backend
 
+O backend fica em `backend/` e é construído com **Node.js + Express**, **Sequelize 6 + MySQL 8.4** (via Docker) e documentação **Swagger**.
 
+### Tecnologias
+
+- Node.js + Express
+- Sequelize 6 + mysql2 (MySQL 8.4 em container Docker)
+- Autenticação com JWT (`jsonwebtoken`)
+- Documentação com Swagger (`swagger-ui-express` + `swagger-jsdoc`)
+- Testes com Jest
+
+### Pré-requisitos
+
+- Node.js 18+
+- Docker + Docker Compose
+
+### Variáveis de ambiente
+
+Copie o arquivo de exemplo e preencha os valores:
+
+```bash
+cp .env.example backend/.env
+```
+
+| Variável | Descrição |
+|----------|-----------|
+| `MYSQL_ROOT_PASSWORD` | Senha do root do MySQL (usada pelo Docker) |
+| `MYSQL_PASSWORD` | Senha do usuário da aplicação no MySQL |
+| `NODE_ENV` | Ambiente (`development`) |
+| `PORT` | Porta do servidor (padrão `3000`) |
+| `DB_HOST` | Host do banco (`localhost`) |
+| `DB_PORT` | Porta do banco (padrão `3306`) |
+| `DB_NAME` | Nome do banco (`casacerta`) |
+| `DB_USER` | Usuário da aplicação (`casacerta_user`) |
+| `DB_PASSWORD` | Senha da aplicação (deve bater com `MYSQL_PASSWORD`) |
+| `JWT_SECRET` | Segredo para assinar os tokens JWT |
+| `JWT_EXPIRES_IN` | Validade do token (ex.: `1h`) |
+
+> Observação: o `docker-compose.yaml` fica em `backend/`, então o `.env` deve estar nessa mesma pasta.
+
+### Como rodar
+
+Todos os comandos a partir de `backend/`:
+
+```bash
+# 1. Subir o MySQL via Docker
+docker compose up -d
+
+# 2. Instalar as dependências
+npm install
+
+# 3. Iniciar o servidor (cria as tabelas via sequelize.sync no boot)
+npm run dev      # desenvolvimento (nodemon)
+# ou
+npm start        # execução simples
+```
+
+O servidor sobe em `http://localhost:3000`. Health check em `http://localhost:3000/health`.
+
+> Se a porta 3306 já estiver em uso por um MySQL local, ajuste `DB_PORT` no `.env` (ex.: `3307`) — o container mapeia `${DB_PORT}:3306`.
+
+### Documentação da API (Swagger)
+
+Com o servidor rodando, acesse:
+
+```
+http://localhost:3000/api-docs
+```
+
+Fluxo para testar rotas protegidas:
+
+1. Crie um usuário em **POST /users**.
+2. Autentique em **POST /auth/login** e copie o `token` da resposta.
+3. Clique em **Authorize** (cadeado), cole o token e confirme.
+4. As rotas de **Simulations** passam a enviar o token automaticamente.
+
+### Rotas do núcleo
+
+| Método | Rota | Descrição | Auth |
+|--------|------|-----------|------|
+| `POST` | `/users` | Cadastra um usuário | — |
+| `POST` | `/auth/login` | Autentica e retorna um token JWT | — |
+| `POST` | `/api/simulations` | Cria uma simulação (financiamento + consórcio + recomendação) | Bearer |
+| `GET` | `/api/simulations` | Lista o histórico do usuário autenticado | Bearer |
+| `GET` | `/api/simulations/:id` | Detalha uma simulação | Bearer |
+
+### Testes
+
+```bash
+npm test
+```
+
+Cobre os serviços de cálculo (financiamento SAC/PRICE, consórcio, recomendação) e a validação de entrada.

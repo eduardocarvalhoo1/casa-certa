@@ -177,6 +177,24 @@ const options = {
           },
         },
 
+        // ---- Autenticação ----
+        LoginInput: {
+          type: 'object',
+          required: ['email', 'password'],
+          properties: {
+            email: { type: 'string', format: 'email', example: 'maria@email.com' },
+            password: { type: 'string', format: 'password', example: 'senhaSegura123' },
+          },
+        },
+        LoginResponse: {
+          type: 'object',
+          properties: {
+            message: { type: 'string', example: 'Login realizado com sucesso.' },
+            token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
+            user: { $ref: '#/components/schemas/User' },
+          },
+        },
+
         // ---- Usuário ----
         UserInput: {
           type: 'object',

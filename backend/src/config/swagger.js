@@ -18,6 +18,11 @@ const options = {
         description: 'Servidor local de desenvolvimento',
       },
     ],
+    tags: [
+      { name: 'Users', description: 'Cadastro de usuários' },
+      { name: 'Auth', description: 'Autenticação de usuários' },
+      { name: 'Simulations', description: 'Simulações de financiamento e consórcio' },
+    ],
     components: {
       securitySchemes: {
         bearerAuth: {

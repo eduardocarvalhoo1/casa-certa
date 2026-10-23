@@ -8,13 +8,6 @@ router.use(authMiddleware);
 
 /**
  * @swagger
- * tags:
- *   name: Simulations
- *   description: Simulações de financiamento e consórcio
- */
-
-/**
- * @swagger
  * /api/simulations:
  *   post:
  *     summary: Cria uma simulação (financiamento + consórcio + recomendação)

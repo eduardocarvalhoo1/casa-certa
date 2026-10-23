@@ -5,13 +5,6 @@ const router = express.Router();
 
 /**
  * @swagger
- * tags:
- *   name: Users
- *   description: Cadastro de usuários
- */
-
-/**
- * @swagger
  * /users:
  *   post:
  *     summary: Cadastra um novo usuário

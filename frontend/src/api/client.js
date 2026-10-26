@@ -33,7 +33,6 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
 });
 
-// Injeta o token Bearer quando presente.
 api.interceptors.request.use((config) => {
   const token = getToken();
   if (token) {
@@ -49,7 +48,7 @@ api.interceptors.response.use(
       return Promise.reject(
         new ApiError(
           0,
-          'Não foi possível conectar ao servidor.'
+          'Não foi possível conectar ao servidor. Verifique se o backend está rodando.'
         )
       );
     }

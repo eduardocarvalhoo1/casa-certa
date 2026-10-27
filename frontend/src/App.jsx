@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
+import Dashboard from './pages/Dashboard';
 
 function Placeholder({ title }) {
   return (
@@ -14,7 +15,7 @@ export default function App() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
-        <Route index element={<Placeholder title="Dashboard" />} />
+        <Route index element={<Dashboard />} />
         <Route
           path="simulacao/nova"
           element={<Placeholder title="Nova Simulação" />}

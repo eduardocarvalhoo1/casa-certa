@@ -30,6 +30,10 @@ function findByIdAndUser(id, userId) {
   });
 }
 
+function deleteByIdAndUser(id, userId) {
+  return Simulation.destroy({ where: { id, userId } });
+}
+
 async function createWithResults({
   simulation,
   financingResult,
@@ -84,5 +88,6 @@ module.exports = {
   findUserById,
   findAllByUser,
   findByIdAndUser,
+  deleteByIdAndUser,
   createWithResults,
 };

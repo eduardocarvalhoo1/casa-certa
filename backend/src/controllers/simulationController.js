@@ -58,4 +58,22 @@ async function getSimulation(req, res) {
   }
 }
 
-module.exports = { createSimulation, listSimulations, getSimulation };
+async function deleteSimulation(req, res) {
+  const id = Number(req.params.id);
+  if (!isPositiveInteger(id)) {
+    return response.badRequest(res, 'O parâmetro "id" deve ser um inteiro positivo.');
+  }
+
+  try {
+    await simulationService.deleteSimulation(id, req.user.id);
+    return res.status(204).send();
+  } catch (err) {
+    if (err instanceof SimulationNotFoundError) {
+      return response.notFound(res, err.message);
+    }
+    console.error('Erro ao excluir simulação:', err);
+    return response.serverError(res, 'Erro interno ao excluir simulação.');
+  }
+}
+
+module.exports = { createSimulation, listSimulations, getSimulation, deleteSimulation };

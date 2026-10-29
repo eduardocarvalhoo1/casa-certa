@@ -169,10 +169,18 @@ async function getSimulation(id, userId) {
   };
 }
 
+async function deleteSimulation(id, userId) {
+  const deleted = await simulationRepository.deleteByIdAndUser(id, userId);
+  if (!deleted) {
+    throw new SimulationNotFoundError('Simulação não encontrada.');
+  }
+}
+
 module.exports = {
   createSimulation,
   listSimulations,
   getSimulation,
+  deleteSimulation,
   SimulationValidationError,
   SimulationNotFoundError,
 };

@@ -125,4 +125,39 @@ router.get('/', SimulationController.listSimulations);
  */
 router.get('/:id', SimulationController.getSimulation);
 
+/**
+ * @swagger
+ * /api/simulations/{id}:
+ *   delete:
+ *     summary: Exclui uma simulação do usuário autenticado
+ *     tags: [Simulations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da simulação.
+ *     responses:
+ *       204:
+ *         description: Simulação excluída com sucesso (sem conteúdo).
+ *       400:
+ *         description: Parâmetro id inválido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Token ausente, inválido ou expirado.
+ *       404:
+ *         description: Simulação não encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.delete('/:id', SimulationController.deleteSimulation);
+
 module.exports = router;

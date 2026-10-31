@@ -30,6 +30,41 @@ const ConsortiumResult = sequelize.define(
       allowNull: false,
     },
 
+    contemplationMonth: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+
+    ownResources: {
+      type: DataTypes.DECIMAL(15, 2),
+      allowNull: true,
+    },
+
+    creditValue: {
+      type: DataTypes.DECIMAL(15, 2),
+      allowNull: true,
+    },
+
+    termMonths: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+
+    adminRateTotal: {
+      type: DataTypes.DECIMAL(9, 6),
+      allowNull: true,
+    },
+
+    reserveFund: {
+      type: DataTypes.DECIMAL(9, 6),
+      allowNull: true,
+    },
+
+    initialBid: {
+      type: DataTypes.DECIMAL(15, 2),
+      allowNull: true,
+    },
+
     evolution: {
       type: DataTypes.TEXT,
       allowNull: false,

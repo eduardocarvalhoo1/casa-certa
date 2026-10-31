@@ -30,6 +30,8 @@ router.use(authMiddleware);
  *               properties:
  *                 simulation:
  *                   type: object
+ *                 input:
+ *                   $ref: '#/components/schemas/SimulationStoredInput'
  *                 financingResult:
  *                   $ref: '#/components/schemas/FinancingResult'
  *                 consortiumResult:
@@ -37,7 +39,7 @@ router.use(authMiddleware);
  *                 recommendation:
  *                   $ref: '#/components/schemas/Recommendation'
  *                 comparison:
- *                   type: object
+ *                   $ref: '#/components/schemas/Comparison'
  *       400:
  *         description: Dados inválidos.
  *         content:
@@ -94,7 +96,7 @@ router.get('/', SimulationController.listSimulations);
  *         description: ID da simulação.
  *     responses:
  *       200:
- *         description: Detalhe da simulação.
+ *         description: Detalhe da simulação (mesmo formato da criação).
  *         content:
  *           application/json:
  *             schema:
@@ -102,12 +104,16 @@ router.get('/', SimulationController.listSimulations);
  *               properties:
  *                 simulation:
  *                   type: object
+ *                 input:
+ *                   $ref: '#/components/schemas/SimulationStoredInput'
  *                 financingResult:
  *                   $ref: '#/components/schemas/FinancingResult'
  *                 consortiumResult:
  *                   $ref: '#/components/schemas/ConsortiumResult'
  *                 recommendation:
  *                   $ref: '#/components/schemas/Recommendation'
+ *                 comparison:
+ *                   $ref: '#/components/schemas/Comparison'
  *       400:
  *         description: Parâmetro id inválido.
  *         content:

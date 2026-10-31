@@ -78,16 +78,22 @@ const options = {
               required: [
                 'creditValue',
                 'termMonths',
-                'adminRateAnnual',
+                'adminRateTotal',
                 'reserveFund',
               ],
               properties: {
-                creditValue: { type: 'number', example: 300000 },
-                termMonths: { type: 'integer', example: 180 },
-                adminRateAnnual: {
+                creditValue: {
                   type: 'number',
-                  description: 'Taxa de administração ao ano (ex.: 0.02 = 2%).',
-                  example: 0.02,
+                  description:
+                    'Valor da carta de crédito. Deve ser <= propertyValue; a diferença é tratada como recursos próprios.',
+                  example: 300000,
+                },
+                termMonths: { type: 'integer', example: 180 },
+                adminRateTotal: {
+                  type: 'number',
+                  description:
+                    'Taxa de administração total do plano, entre 0 e 1 (ex.: 0.16 = 16% sobre o crédito).',
+                  example: 0.16,
                 },
                 reserveFund: {
                   type: 'number',
@@ -98,6 +104,12 @@ const options = {
                   type: 'number',
                   description: 'Lance inicial opcional (reduz o prazo).',
                   example: 50000,
+                },
+                contemplationMonth: {
+                  type: 'integer',
+                  description:
+                    'Mês estimado de contemplação (opcional, de 1 ao prazo). Padrão: metade do prazo.',
+                  example: 60,
                 },
               },
             },
@@ -110,7 +122,11 @@ const options = {
             financeAmount: { type: 'number', example: 240000 },
             initialPayment: { type: 'number', example: 2100.55 },
             finalPayment: { type: 'number', example: 680.12 },
-            totalPaid: { type: 'number', example: 520000 },
+            totalPaid: {
+              type: 'number',
+              description: 'Custo total: entrada + soma das parcelas.',
+              example: 580000,
+            },
             totalInterest: { type: 'number', example: 280000 },
             evolution: {
               type: 'array',
@@ -133,9 +149,27 @@ const options = {
           type: 'object',
           properties: {
             monthlyPayment: { type: 'number', example: 1850.0 },
-            totalPaid: { type: 'number', example: 333000 },
+            ownResources: {
+              type: 'number',
+              description:
+                'Complemento com recursos próprios (propertyValue - creditValue). null em simulações antigas.',
+              nullable: true,
+              example: 0,
+            },
+            totalPaid: {
+              type: 'number',
+              description: 'Custo total: lance + soma das parcelas + recursos próprios.',
+              example: 333000,
+            },
             totalTaxes: { type: 'number', example: 33000 },
             estimatedTermWithBid: { type: 'integer', example: 150 },
+            contemplationMonth: {
+              type: 'integer',
+              nullable: true,
+              description:
+                'Mês de contemplação usado na recomendação: o informado ou metade do prazo, limitado ao prazo com lance. null em simulações antigas.',
+              example: 90,
+            },
             evolution: {
               type: 'array',
               items: { $ref: '#/components/schemas/ConsortiumInstallment' },
@@ -161,8 +195,76 @@ const options = {
             },
             financingScore: { type: 'number', example: 87.5 },
             consortiumScore: { type: 'number', example: 72.3 },
-            financingWeights: { type: 'object', example: { totalCost: 0.4, timeframe: 0.35, initialPayment: 0.25 } },
-            consortiumWeights: { type: 'object', example: { totalCost: 0.4, timeframe: 0.35, initialPayment: 0.25 } },
+            financingWeights: {
+              type: 'object',
+              example: { totalCost: 0.4, payoffTerm: 0.2, timeToProperty: 0.15, initialPayment: 0.25 },
+            },
+            consortiumWeights: {
+              type: 'object',
+              example: { totalCost: 0.4, payoffTerm: 0.2, timeToProperty: 0.15, initialPayment: 0.25 },
+            },
+          },
+        },
+
+        SimulationStoredInput: {
+          type: 'object',
+          description:
+            'Entradas usadas no cálculo. Campos ficam null em simulações criadas antes de as entradas serem salvas.',
+          properties: {
+            financing: {
+              type: 'object',
+              properties: {
+                downPayment: { type: 'number', nullable: true, example: 60000 },
+                termYears: { type: 'integer', nullable: true, example: 30 },
+                interestRateAnnual: { type: 'number', nullable: true, example: 0.09 },
+              },
+            },
+            consortium: {
+              type: 'object',
+              properties: {
+                creditValue: { type: 'number', nullable: true, example: 300000 },
+                termMonths: { type: 'integer', nullable: true, example: 180 },
+                adminRateTotal: { type: 'number', nullable: true, example: 0.16 },
+                reserveFund: { type: 'number', nullable: true, example: 0.01 },
+                initialBid: {
+                  type: 'number',
+                  nullable: true,
+                  description: '0 quando não há lance.',
+                  example: 50000,
+                },
+              },
+            },
+          },
+        },
+
+        Comparison: {
+          type: 'object',
+          description: 'Indicadores lado a lado (financiamento x consórcio).',
+          properties: {
+            initialPayment: { $ref: '#/components/schemas/ComparisonPair' },
+            totalCost: { $ref: '#/components/schemas/ComparisonPair' },
+            interestOrTaxes: { $ref: '#/components/schemas/ComparisonPair' },
+            timeframe: {
+              allOf: [{ $ref: '#/components/schemas/ComparisonPair' }],
+              description: 'Prazo para quitar, em meses.',
+            },
+            timeToProperty: {
+              allOf: [{ $ref: '#/components/schemas/ComparisonPair' }],
+              description:
+                'Meses até ter o imóvel: 0 no financiamento e o mês de contemplação no consórcio (null em simulações antigas).',
+            },
+            downPaymentOrBid: {
+              allOf: [{ $ref: '#/components/schemas/ComparisonPair' }],
+              description:
+                'Pago com recursos próprios: entrada (financiamento) e lance + complemento (consórcio). null em simulações antigas.',
+            },
+          },
+        },
+        ComparisonPair: {
+          type: 'object',
+          properties: {
+            financing: { type: 'number', nullable: true },
+            consortium: { type: 'number', nullable: true },
           },
         },
 

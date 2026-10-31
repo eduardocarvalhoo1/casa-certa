@@ -5,6 +5,7 @@ const {
 } = require('../services/simulationService');
 const { validateSimulationInput, isPositiveInteger } = require('../utils/validation');
 const response = require('../utils/response');
+const { CalculationInputError } = require('../utils/errors');
 
 async function createSimulation(req, res) {
   const { valid, errors } = validateSimulationInput(req.body);
@@ -22,8 +23,8 @@ async function createSimulation(req, res) {
     if (err instanceof SimulationValidationError) {
       return response.badRequest(res, err.message, err.details);
     }
-    if (err instanceof Error && err.name && !err.name.includes('Sequelize')) {
-      return response.badRequest(res, err.message);
+    if (err instanceof CalculationInputError) {
+      return response.badRequest(res, 'Dados inválidos.', [err.message]);
     }
     console.error('Erro ao criar simulação:', err);
     return response.serverError(res, 'Erro interno ao criar simulação.');

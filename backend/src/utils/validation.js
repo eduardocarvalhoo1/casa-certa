@@ -69,12 +69,19 @@ function validateSimulationInput(body) {
   } else {
     if (!isPositiveNumber(consortium.creditValue)) {
       errors.push('O campo "consortium.creditValue" deve ser um número positivo.');
+    } else if (isPositiveNumber(propertyValue) && consortium.creditValue > propertyValue) {
+      errors.push(
+        'O crédito do consórcio ("consortium.creditValue") não pode ser maior que o valor do imóvel.'
+      );
     }
     if (!isPositiveInteger(consortium.termMonths)) {
       errors.push('O campo "consortium.termMonths" deve ser um inteiro positivo (meses).');
     }
-    if (!isNumber(consortium.adminRateAnnual) || consortium.adminRateAnnual < 0) {
-      errors.push('O campo "consortium.adminRateAnnual" deve ser um número >= 0.');
+    if (!isNumber(consortium.adminRateTotal) ||
+        consortium.adminRateTotal < 0 || consortium.adminRateTotal > 1) {
+      errors.push(
+        'O campo "consortium.adminRateTotal" deve ser um número entre 0 e 1 (taxa total do plano, ex.: 0.16 = 16%).'
+      );
     }
     if (!isNumber(consortium.reserveFund) || consortium.reserveFund < 0) {
       errors.push('O campo "consortium.reserveFund" deve ser um número >= 0.');
@@ -82,6 +89,18 @@ function validateSimulationInput(body) {
     if (consortium.initialBid !== undefined &&
         (!isNumber(consortium.initialBid) || consortium.initialBid < 0)) {
       errors.push('O campo "consortium.initialBid" deve ser um número >= 0 quando informado.');
+    }
+    if (consortium.contemplationMonth !== undefined && consortium.contemplationMonth !== null) {
+      const month = consortium.contemplationMonth;
+      if (!isPositiveInteger(month)) {
+        errors.push(
+          'O campo "consortium.contemplationMonth" deve ser um inteiro positivo (mês) quando informado.'
+        );
+      } else if (isPositiveInteger(consortium.termMonths) && month > consortium.termMonths) {
+        errors.push(
+          'O mês de contemplação ("consortium.contemplationMonth") não pode ser maior que o prazo do consórcio.'
+        );
+      }
     }
   }
 

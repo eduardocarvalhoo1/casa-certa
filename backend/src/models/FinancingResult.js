@@ -35,6 +35,21 @@ const FinancingResult = sequelize.define(
       allowNull: false,
     },
 
+    downPayment: {
+      type: DataTypes.DECIMAL(15, 2),
+      allowNull: true,
+    },
+
+    termYears: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+
+    interestRateAnnual: {
+      type: DataTypes.DECIMAL(9, 6),
+      allowNull: true,
+    },
+
     // Array de { month, payment, interest, amortization, balance } como JSON string
     evolution: {
       type: DataTypes.TEXT,

@@ -1,4 +1,4 @@
-const { calculateFinancing } = require('./financingService');
+const { calculateFinancing, round2 } = require('./financingService');
 const { calculateConsortium } = require('./consortiumService');
 const { calculateRecommendation } = require('./recommendationService');
 const simulationRepository = require('../repositories/simulationRepository');
@@ -26,7 +26,16 @@ function parseJSON(value, fallback) {
   }
 }
 
-function buildComparison({ financingResult, consortiumResult, financing, consortium }) {
+function toNumberOrNull(value) {
+  return value === null || value === undefined ? null : Number(value);
+}
+
+function buildComparison({ financingResult, consortiumResult, financingInput, consortiumInput }) {
+  const { initialBid } = consortiumInput;
+  const { ownResources } = consortiumResult;
+  const consortiumOwnMoney =
+    initialBid === null || ownResources === null ? null : round2(initialBid + ownResources);
+
   return {
     initialPayment: {
       financing: financingResult.initialPayment,
@@ -44,9 +53,13 @@ function buildComparison({ financingResult, consortiumResult, financing, consort
       financing: financingResult.evolution.length,
       consortium: consortiumResult.estimatedTermWithBid,
     },
+    timeToProperty: {
+      financing: 0,
+      consortium: consortiumResult.contemplationMonth ?? null,
+    },
     downPaymentOrBid: {
-      financing: financing.downPayment,
-      consortium: consortium.initialBid || 0,
+      financing: financingInput.downPayment,
+      consortium: consortiumOwnMoney,
     },
   };
 }
@@ -74,9 +87,11 @@ async function createSimulation(input) {
   const consortiumResult = calculateConsortium({
     creditValue: consortium.creditValue,
     loanTermMonths: consortium.termMonths,
-    adminRateAnnual: consortium.adminRateAnnual,
+    adminRateTotal: consortium.adminRateTotal,
     reserveFund: consortium.reserveFund,
     initialBid: consortium.initialBid,
+    propertyValue,
+    contemplationMonth: consortium.contemplationMonth,
   });
 
   const recommendation = calculateRecommendation({
@@ -85,14 +100,36 @@ async function createSimulation(input) {
     objective,
   });
 
+  const storedInput = {
+    financing: {
+      downPayment: financing.downPayment,
+      termYears: financing.termYears,
+      interestRateAnnual: financing.interestRateAnnual,
+    },
+    consortium: {
+      creditValue: consortium.creditValue,
+      termMonths: consortium.termMonths,
+      adminRateTotal: consortium.adminRateTotal,
+      reserveFund: consortium.reserveFund,
+      initialBid: consortium.initialBid ?? 0,
+    },
+  };
+
   const created = await simulationRepository.createWithResults({
     simulation: { name, objective, system, propertyValue, userId },
+    financingInput: storedInput.financing,
+    consortiumInput: storedInput.consortium,
     financingResult,
     consortiumResult,
     recommendation,
   });
 
-  const comparison = buildComparison({ financingResult, consortiumResult, financing, consortium });
+  const comparison = buildComparison({
+    financingResult,
+    consortiumResult,
+    financingInput: storedInput.financing,
+    consortiumInput: storedInput.consortium,
+  });
 
   return {
     simulation: {
@@ -104,6 +141,7 @@ async function createSimulation(input) {
       userId: created.userId,
       createdAt: created.createdAt,
     },
+    input: storedInput,
     financingResult,
     consortiumResult,
     recommendation,
@@ -134,6 +172,50 @@ async function getSimulation(id, userId) {
   const consortium = s.consortiumResult;
   const recommendation = s.recommendation;
 
+  const input = {
+    financing: financing && {
+      downPayment: toNumberOrNull(financing.downPayment),
+      termYears: financing.termYears ?? null,
+      interestRateAnnual: toNumberOrNull(financing.interestRateAnnual),
+    },
+    consortium: consortium && {
+      creditValue: toNumberOrNull(consortium.creditValue),
+      termMonths: consortium.termMonths ?? null,
+      adminRateTotal: toNumberOrNull(consortium.adminRateTotal),
+      reserveFund: toNumberOrNull(consortium.reserveFund),
+      initialBid: toNumberOrNull(consortium.initialBid),
+    },
+  };
+
+  const financingResult = financing && {
+    financeAmount: Number(financing.financeAmount),
+    initialPayment: Number(financing.initialPayment),
+    finalPayment: Number(financing.finalPayment),
+    totalPaid: Number(financing.totalPaid),
+    totalInterest: Number(financing.totalInterest),
+    evolution: parseJSON(financing.evolution, []),
+  };
+
+  const consortiumResult = consortium && {
+    monthlyPayment: Number(consortium.monthlyPayment),
+    ownResources: toNumberOrNull(consortium.ownResources),
+    totalPaid: Number(consortium.totalPaid),
+    totalTaxes: Number(consortium.totalTaxes),
+    estimatedTermWithBid: consortium.estimatedTermWithBid,
+    contemplationMonth: consortium.contemplationMonth ?? null,
+    evolution: parseJSON(consortium.evolution, []),
+  };
+
+  const comparison =
+    financingResult && consortiumResult
+      ? buildComparison({
+          financingResult,
+          consortiumResult,
+          financingInput: input.financing,
+          consortiumInput: input.consortium,
+        })
+      : null;
+
   return {
     simulation: {
       id: s.id,
@@ -144,21 +226,10 @@ async function getSimulation(id, userId) {
       userId: s.userId,
       createdAt: s.createdAt,
     },
-    financingResult: financing && {
-      financeAmount: Number(financing.financeAmount),
-      initialPayment: Number(financing.initialPayment),
-      finalPayment: Number(financing.finalPayment),
-      totalPaid: Number(financing.totalPaid),
-      totalInterest: Number(financing.totalInterest),
-      evolution: parseJSON(financing.evolution, []),
-    },
-    consortiumResult: consortium && {
-      monthlyPayment: Number(consortium.monthlyPayment),
-      totalPaid: Number(consortium.totalPaid),
-      totalTaxes: Number(consortium.totalTaxes),
-      estimatedTermWithBid: consortium.estimatedTermWithBid,
-      evolution: parseJSON(consortium.evolution, []),
-    },
+    input,
+    financingResult,
+    consortiumResult,
+    comparison,
     recommendation: recommendation && {
       recommendedOption: recommendation.recommendedOption,
       financingScore: Number(recommendation.financingScore),

@@ -11,9 +11,13 @@ const PORT = process.env.PORT || 3000;
 async function startServer() {
   try {
     await connectDB();
-    await sequelize.sync();
 
-    console.log('Modelos sincronizados com o banco de dados.');
+    const isProduction = process.env.NODE_ENV === 'production';
+    await sequelize.sync({ alter: !isProduction });
+
+    console.log(
+      `Modelos sincronizados com o banco de dados${isProduction ? '' : ' (alter: ativo)'}.`
+    );
 
     const server = app.listen(PORT, () => {
       console.log(`Servidor rodando na porta ${PORT}`);

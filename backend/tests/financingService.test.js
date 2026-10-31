@@ -54,6 +54,31 @@ describe('financingService.calculateFinancing', () => {
     });
   });
 
+  describe('custo total (totalPaid)', () => {
+    const sumPayments = (r) => r.evolution.reduce((sum, e) => sum + e.payment, 0);
+
+    test.each(['SAC', 'PRICE'])(
+      'deve somar a entrada às parcelas quando o sistema é %s',
+      (system) => {
+        const r = calculateFinancing({ ...base, system });
+        expect(r.totalPaid).toBeCloseTo(base.downPayment + sumPayments(r), 0);
+      }
+    );
+
+    test.each(['SAC', 'PRICE'])(
+      'deve ser igual a valor do imóvel + juros quando o sistema é %s',
+      (system) => {
+        const r = calculateFinancing({ ...base, system });
+        expect(r.totalPaid).toBeCloseTo(base.propertyValue + r.totalInterest, 0);
+      }
+    );
+
+    test('deve ser apenas a soma das parcelas quando não há entrada', () => {
+      const r = calculateFinancing({ ...base, downPayment: 0, system: 'SAC' });
+      expect(r.totalPaid).toBeCloseTo(sumPayments(r), 0);
+    });
+  });
+
   describe('comparação entre sistemas', () => {
     test('deve pagar menos juros no total no SAC do que no PRICE quando os demais dados são iguais', () => {
       const sac = calculateFinancing({ ...base, system: 'SAC' });

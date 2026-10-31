@@ -1,3 +1,5 @@
+const { CalculationInputError } = require('../utils/errors');
+
 function round2(value) {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 }
@@ -14,24 +16,24 @@ function calculateFinancing({
   system,
 }) {
   if (!(propertyValue > 0)) {
-    throw new Error('O valor do imóvel (propertyValue) deve ser maior que zero.');
+    throw new CalculationInputError('O valor do imóvel (propertyValue) deve ser maior que zero.');
   }
   if (!(downPayment >= 0)) {
-    throw new Error('A entrada (downPayment) não pode ser negativa.');
+    throw new CalculationInputError('A entrada (downPayment) não pode ser negativa.');
   }
   if (downPayment >= propertyValue) {
-    throw new Error('A entrada (downPayment) deve ser menor que o valor do imóvel.');
+    throw new CalculationInputError('A entrada (downPayment) deve ser menor que o valor do imóvel.');
   }
   if (!Number.isInteger(loanTermMonths) || loanTermMonths <= 0) {
-    throw new Error('O prazo (loanTermMonths) deve ser um inteiro maior que zero.');
+    throw new CalculationInputError('O prazo (loanTermMonths) deve ser um inteiro maior que zero.');
   }
   if (!(interestRateAnnual > 0)) {
-    throw new Error('A taxa de juros anual (interestRateAnnual) deve ser maior que zero.');
+    throw new CalculationInputError('A taxa de juros anual (interestRateAnnual) deve ser maior que zero.');
   }
 
   const normalizedSystem = String(system).toUpperCase();
   if (normalizedSystem !== 'SAC' && normalizedSystem !== 'PRICE') {
-    throw new Error('O sistema (system) deve ser "SAC" ou "PRICE".');
+    throw new CalculationInputError('O sistema (system) deve ser "SAC" ou "PRICE".');
   }
 
   const financeAmount = propertyValue - downPayment;
@@ -98,6 +100,8 @@ function calculateFinancing({
       });
     }
   }
+
+  totalPaid += downPayment;
 
   return {
     financeAmount: round2(financeAmount),

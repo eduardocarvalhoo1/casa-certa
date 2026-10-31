@@ -36,6 +36,8 @@ function deleteByIdAndUser(id, userId) {
 
 async function createWithResults({
   simulation,
+  financingInput,
+  consortiumInput,
   financingResult,
   consortiumResult,
   recommendation,
@@ -51,6 +53,9 @@ async function createWithResults({
         finalPayment: financingResult.finalPayment,
         totalPaid: financingResult.totalPaid,
         totalInterest: financingResult.totalInterest,
+        downPayment: financingInput.downPayment,
+        termYears: financingInput.termYears,
+        interestRateAnnual: financingInput.interestRateAnnual,
         evolution: JSON.stringify(financingResult.evolution),
       },
       { transaction: t }
@@ -63,6 +68,13 @@ async function createWithResults({
         totalPaid: consortiumResult.totalPaid,
         totalTaxes: consortiumResult.totalTaxes,
         estimatedTermWithBid: consortiumResult.estimatedTermWithBid,
+        contemplationMonth: consortiumResult.contemplationMonth,
+        ownResources: consortiumResult.ownResources,
+        creditValue: consortiumInput.creditValue,
+        termMonths: consortiumInput.termMonths,
+        adminRateTotal: consortiumInput.adminRateTotal,
+        reserveFund: consortiumInput.reserveFund,
+        initialBid: consortiumInput.initialBid,
         evolution: JSON.stringify(consortiumResult.evolution),
       },
       { transaction: t }

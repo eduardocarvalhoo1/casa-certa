@@ -103,9 +103,12 @@ export default function Dashboard() {
                     <button
                       type="button"
                       onClick={() => navigate(`/comparacao/${s.id}`)}
-                      className="flex w-full items-center justify-between gap-4 py-3 text-left hover:bg-neutral-50"
+                      className="grid w-full grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_8rem] items-center gap-4 px-2 py-3 text-left hover:bg-neutral-50"
                     >
-                      <span className="font-medium text-neutral-900">
+                      <span
+                        className="truncate font-medium text-neutral-900"
+                        title={s.name}
+                      >
                         {s.name}
                       </span>
                       <span className="text-sm text-neutral-500">
@@ -114,7 +117,7 @@ export default function Dashboard() {
                       <span className="text-sm text-neutral-900">
                         {formatCurrency(s.propertyValue)}
                       </span>
-                      <span className="rounded-full border border-neutral-300 px-3 py-1 text-xs text-neutral-700">
+                      <span className="justify-self-end rounded-full border border-neutral-300 px-3 py-1 text-center text-xs text-neutral-700">
                         {recommendedOptionLabel(s.recommendedOption)}
                       </span>
                     </button>

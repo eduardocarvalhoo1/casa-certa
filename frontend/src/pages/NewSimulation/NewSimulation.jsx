@@ -24,9 +24,10 @@ const STEP_FIELDS = [
   [
     'consortium.creditValue',
     'consortium.termMonths',
-    'consortium.adminRateAnnual',
+    'consortium.adminRateTotal',
     'consortium.reserveFund',
     'consortium.initialBid',
+    'consortium.contemplationMonth',
   ],
   [],
 ];
@@ -45,13 +46,20 @@ function buildPayload(values) {
     consortium: {
       creditValue: Number(values.consortium.creditValue),
       termMonths: Number(values.consortium.termMonths),
-      adminRateAnnual: Number(values.consortium.adminRateAnnual) / 100,
+      adminRateTotal: Number(values.consortium.adminRateTotal) / 100,
       reserveFund: Number(values.consortium.reserveFund) / 100,
     },
   };
 
   if (values.consortium.initialBid !== undefined) {
     payload.consortium.initialBid = Number(values.consortium.initialBid);
+  }
+
+  if (
+    values.consortium.contemplationMonth !== undefined &&
+    values.consortium.contemplationMonth !== ''
+  ) {
+    payload.consortium.contemplationMonth = Number(values.consortium.contemplationMonth);
   }
 
   return payload;
@@ -154,9 +162,10 @@ export default function NewSimulation() {
       consortium: {
         creditValue: '',
         termMonths: '',
-        adminRateAnnual: '',
+        adminRateTotal: '',
         reserveFund: '',
         initialBid: '',
+        contemplationMonth: '',
       },
     },
   });

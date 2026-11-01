@@ -16,6 +16,17 @@ export default function StepSummary() {
   const v = getValues();
 
   const bid = v.consortium?.initialBid;
+  const ownResources =
+    Number(v.propertyValue) - Number(v.consortium?.creditValue);
+
+  const contemplation = v.consortium?.contemplationMonth;
+  const termMonths = Number(v.consortium?.termMonths);
+  const contemplationLabel =
+    contemplation !== undefined && contemplation !== ''
+      ? `Mês ${contemplation}`
+      : Number.isInteger(termMonths) && termMonths > 0
+        ? `Mês ${Math.ceil(termMonths / 2)} (metade do prazo)`
+        : '—';
 
   return (
     <div className="space-y-6">
@@ -52,13 +63,16 @@ export default function StepSummary() {
             Consórcio
           </h3>
           <Row label="Crédito" value={formatCurrency(v.consortium?.creditValue)} />
+          {ownResources > 0 && (
+            <Row label="Recursos próprios" value={formatCurrency(ownResources)} />
+          )}
           <Row
             label="Prazo"
             value={`${v.consortium?.termMonths ?? '—'} meses`}
           />
           <Row
-            label="Taxa de adm. ao ano"
-            value={`${v.consortium?.adminRateAnnual ?? '—'}%`}
+            label="Taxa de adm. total"
+            value={`${v.consortium?.adminRateTotal ?? '—'}%`}
           />
           <Row
             label="Fundo de reserva"
@@ -67,6 +81,10 @@ export default function StepSummary() {
           <Row
             label="Lance"
             value={bid === undefined ? '—' : formatCurrency(bid)}
+          />
+          <Row
+            label="Contemplação estimada"
+            value={contemplationLabel}
           />
         </div>
       </div>

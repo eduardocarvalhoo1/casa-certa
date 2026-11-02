@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
 import Dashboard from './pages/Dashboard';
 import NewSimulation from './pages/NewSimulation/NewSimulation';
+import Comparison from './pages/Comparison';
+import History from './pages/History';
 
 function Placeholder({ title }) {
   return (
@@ -18,11 +20,8 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="simulacao/nova" element={<NewSimulation />} />
-        <Route
-          path="comparacao/:id"
-          element={<Placeholder title="Comparação" />}
-        />
-        <Route path="historico" element={<Placeholder title="Histórico" />} />
+        <Route path="comparacao/:id" element={<Comparison />} />
+        <Route path="historico" element={<History />} />
         <Route path="perfil" element={<Placeholder title="Perfil" />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

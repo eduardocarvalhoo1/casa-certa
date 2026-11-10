@@ -11,3 +11,7 @@ export function listSimulations() {
 export function getSimulation(id) {
   return api.get(`/api/simulations/${id}`);
 }
+
+export function deleteSimulation(id) {
+  return api.delete(`/api/simulations/${id}`);
+}

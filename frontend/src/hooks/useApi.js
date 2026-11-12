@@ -26,5 +26,5 @@ export default function useApi(apiCall, { immediate = true } = {}) {
     }
   }, [immediate, run]);
 
-  return { data, loading, error, reload: run };
+  return { data, setData, loading, error, reload: run };
 }

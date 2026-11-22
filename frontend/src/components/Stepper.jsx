@@ -5,7 +5,7 @@ export default function Stepper({ steps, current }) {
         const isActive = index === current;
         const isDone = index < current;
         return (
-          <li key={label} className="flex flex-1 items-center gap-2">
+          <li key={label} className="flex min-w-0 flex-1 items-center gap-2">
             <span
               className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
                 isActive
@@ -18,14 +18,15 @@ export default function Stepper({ steps, current }) {
               {index + 1}
             </span>
             <span
-              className={`text-sm ${
+              title={label}
+              className={`truncate text-sm ${
                 isActive ? 'font-medium text-neutral-900' : 'text-neutral-400'
               }`}
             >
               {label}
             </span>
             {index < steps.length - 1 && (
-              <span className="mx-2 h-px flex-1 bg-neutral-200" />
+              <span className="mx-2 h-px min-w-4 flex-1 bg-neutral-200" />
             )}
           </li>
         );

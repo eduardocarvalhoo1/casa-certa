@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { setToken } from '../api/client';
+import { clearSession } from '../utils/session';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', end: true },
@@ -12,13 +12,12 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   function handleLogout() {
-    setToken(null);
-    localStorage.removeItem('cc_user');
+    clearSession();
     navigate('/login');
   }
 
   return (
-    <aside className="flex w-60 flex-col border-r border-neutral-200 bg-white">
+    <aside className="sticky top-0 flex h-screen w-48 shrink-0 flex-col border-r border-neutral-200 bg-white lg:w-60">
       <div className="flex items-center gap-2 px-6 py-5">
         <span className="text-lg font-semibold text-neutral-900">CasaCerta</span>
       </div>

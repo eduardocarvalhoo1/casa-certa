@@ -9,7 +9,7 @@ import EmptyState from '../components/EmptyState';
 import ErrorMessage from '../components/ErrorMessage';
 import { formatCurrency, formatDate } from '../utils/format';
 import {
-  getStoredUser,
+  getSessionUser,
   recommendedOptionLabel,
 } from '../utils/session';
 
@@ -24,7 +24,7 @@ function SummaryCard({ label, value }) {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const user = getStoredUser();
+  const user = getSessionUser();
 
   const fetchSimulations = useCallback(() => listSimulations(), []);
   const { data, loading, error, reload } = useApi(fetchSimulations);
@@ -97,7 +97,8 @@ export default function Dashboard() {
                 }
               />
             ) : (
-              <ul className="divide-y divide-neutral-100">
+              <div className="overflow-x-auto">
+              <ul className="min-w-[560px] divide-y divide-neutral-100">
                 {recent.map((s) => (
                   <li key={s.id}>
                     <button
@@ -124,6 +125,7 @@ export default function Dashboard() {
                   </li>
                 ))}
               </ul>
+              </div>
             )}
           </Card>
         </>

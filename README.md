@@ -225,6 +225,7 @@ Fluxo para testar rotas protegidas:
 | `POST` | `/api/simulations` | Cria uma simulação (financiamento + consórcio + recomendação) | Bearer |
 | `GET` | `/api/simulations` | Lista o histórico do usuário autenticado | Bearer |
 | `GET` | `/api/simulations/:id` | Detalha uma simulação | Bearer |
+| `DELETE` | `/api/simulations/:id` | Exclui uma simulação | Bearer |
 
 ### Testes
 
@@ -233,3 +234,68 @@ npm test
 ```
 
 Cobre os serviços de cálculo (financiamento SAC/PRICE, consórcio, recomendação) e a validação de entrada.
+
+---
+
+## Frontend
+
+O frontend fica em `frontend/` e é construído com **React 18 + Vite**, **Tailwind CSS**, **React Router**, **axios**, **react-hook-form** e **Recharts**.
+
+### Pré-requisitos
+
+- Node.js 18+
+- Backend rodando (veja a seção [Backend](#backend))
+
+### Variáveis de ambiente
+
+A partir de `frontend/`:
+
+```bash
+cp .env.example .env
+```
+
+| Variável | Descrição |
+|----------|-----------|
+| `VITE_API_URL` | Endereço do backend que o frontend chama (padrão `http://localhost:3000`) |
+
+> `VITE_API_URL` aponta para o **backend**, não para o próprio frontend. Se você mudar `PORT` no `.env` do backend, atualize esta variável também.
+
+### Como rodar
+
+Todos os comandos a partir de `frontend/`:
+
+```bash
+npm install
+npm run dev
+```
+
+O frontend sobe em `http://localhost:5173`.
+
+### Portas
+
+| Serviço | Porta | Endereço |
+|---------|-------|----------|
+| Backend (Express) | `3000` | `http://localhost:3000` |
+| Frontend (Vite) | `5173` | `http://localhost:5173` |
+| MySQL (Docker) | `3306` | definido por `DB_PORT` |
+
+Backend e frontend rodam ao mesmo tempo, cada um no seu terminal. O backend já habilita CORS, então não é preciso configurar proxy.
+
+### Scripts
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Servidor de desenvolvimento na porta 5173 |
+| `npm run build` | Gera a versão de produção em `dist/` |
+| `npm run preview` | Serve localmente a versão gerada em `dist/` |
+| `npm run lint` | Executa o ESLint |
+
+### Telas
+
+| Rota | Tela |
+|------|------|
+| `/` | Dashboard |
+| `/simulacao/nova` | Nova Simulação (Objetivo → Financiamento → Consórcio → Resumo) |
+| `/comparacao/:id` | Comparação e Recomendação |
+| `/historico` | Histórico (filtros e exclusão) |
+| `/perfil` | Perfil |

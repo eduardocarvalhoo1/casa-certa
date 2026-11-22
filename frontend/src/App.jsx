@@ -1,18 +1,13 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
+import Loading from './components/Loading';
 import Dashboard from './pages/Dashboard';
 import NewSimulation from './pages/NewSimulation/NewSimulation';
-import Comparison from './pages/Comparison';
 import History from './pages/History';
+import Profile from './pages/Profile';
 
-function Placeholder({ title }) {
-  return (
-    <div>
-      <h1 className="text-2xl font-semibold">{title}</h1>
-      <p className="mt-2 text-sm text-neutral-500">Em construção.</p>
-    </div>
-  );
-}
+const Comparison = lazy(() => import('./pages/Comparison'));
 
 export default function App() {
   return (
@@ -20,9 +15,16 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="simulacao/nova" element={<NewSimulation />} />
-        <Route path="comparacao/:id" element={<Comparison />} />
+        <Route
+          path="comparacao/:id"
+          element={
+            <Suspense fallback={<Loading message="Carregando comparação..." />}>
+              <Comparison />
+            </Suspense>
+          }
+        />
         <Route path="historico" element={<History />} />
-        <Route path="perfil" element={<Placeholder title="Perfil" />} />
+        <Route path="perfil" element={<Profile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

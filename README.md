@@ -299,18 +299,3 @@ Backend e frontend rodam ao mesmo tempo, cada um no seu terminal. O backend já 
 | `/comparacao/:id` | Comparação e Recomendação |
 | `/historico` | Histórico (filtros e exclusão) |
 | `/perfil` | Perfil |
-
-### Testar sem a tela de login
-
-A tela de login ainda não existe no frontend. Para usar as telas protegidas:
-
-1. Com o backend rodando, faça login em **POST /auth/login** pelo Swagger (`http://localhost:3000/api-docs`) e copie o `token`.
-2. Abra `http://localhost:5173`, abra o console do navegador (F12) e execute:
-
-   ```js
-   localStorage.setItem('cc_token', 'SEU_TOKEN_AQUI')
-   ```
-
-3. Recarregue a página.
-
-O token expira conforme `JWT_EXPIRES_IN` (padrão `1h`). Quando expirar, as telas mostram erro e é preciso repetir o processo.

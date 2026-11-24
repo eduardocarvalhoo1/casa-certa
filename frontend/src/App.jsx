@@ -6,12 +6,14 @@ import Dashboard from './pages/Dashboard';
 import NewSimulation from './pages/NewSimulation/NewSimulation';
 import History from './pages/History';
 import Profile from './pages/Profile';
+import Login from './pages/Login';
 
 const Comparison = lazy(() => import('./pages/Comparison'));
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/login" element={<Login />} />
       <Route element={<AppLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="simulacao/nova" element={<NewSimulation />} />

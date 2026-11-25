@@ -8,30 +8,29 @@ import History from './pages/History';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import { getSessionUser } from './utils/session';
-import { getToken } from './api/client';
+
+import ProtectedRoute from './components/ProtectedRoute';
 
 const Comparison = lazy(() => import('./pages/Comparison'));
 
 export default function App() {
-
-  const session = getSessionUser();
-
-  const isAuthenticated =
-    Boolean(getToken()) &&
-    session !== null &&
-    session.expiresAt !== null &&
-    session.expiresAt > new Date();
-    
+  
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      <Route element={<AppLayout />}>
-        <Route index element={ isAuthenticated
-      ? <Dashboard />
-      : <Navigate to="/login" replace />} />
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>}>
+        <Route
+          index
+          element={
+            <Dashboard />
+          }
+        />
         <Route path="simulacao/nova" element={<NewSimulation />} />
         <Route
           path="comparacao/:id"

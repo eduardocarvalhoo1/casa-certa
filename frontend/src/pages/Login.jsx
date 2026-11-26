@@ -1,34 +1,33 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { loginUser } from '../api/auth';
-import { setToken } from '../api/client';
+import { loginUser } from "../api/auth";
+import { setToken } from "../api/client";
 
 export default function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
- 
       const data = await loginUser({ email, password });
 
       setToken(data.token);
 
-      localStorage.setItem('cc_user', JSON.stringify(data.user));
+      localStorage.setItem("cc_user", JSON.stringify(data.user));
 
-      navigate('/');
+      navigate("/");
     } catch (err) {
-      setError(err.message || 'Não foi possível realizar o login.');
+      setError(err.message || "Não foi possível realizar o login.");
     } finally {
       setLoading(false);
     }
@@ -37,11 +36,8 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 py-12">
       <div className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-8 shadow-sm">
-
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-neutral-900">
-            CasaCerta
-          </h1>
+          <h1 className="text-3xl font-bold text-neutral-900">CasaCerta</h1>
           <p className="mt-2 text-sm text-neutral-500">
             Entre na sua conta para continuar.
           </p>
@@ -49,7 +45,10 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium text-neutral-700">
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-medium text-neutral-700"
+            >
               E-mail
             </label>
             <input
@@ -65,7 +64,10 @@ export default function Login() {
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium text-neutral-700">
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm font-medium text-neutral-700"
+            >
               Senha
             </label>
             <input
@@ -91,21 +93,22 @@ export default function Login() {
             disabled={loading}
             className="w-full rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? 'Entrando...' : 'Entrar'}
+            {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
 
         <div className="mt-6 border-t border-neutral-100 pt-5 text-center">
-          <p className="text-sm text-neutral-500">
-            Ainda não tem uma conta?
-          </p>
-          <p className="mt-1 text-sm font-medium text-neutral-900">
-            Cadastro disponível em breve.
-          </p>
-        </div>
+          <p className="text-sm text-neutral-500">Ainda não tem uma conta?</p>
 
+          <button
+            type="button"
+            onClick={() => navigate("/register")}
+            className="mt-1 text-sm font-medium text-neutral-900 hover:underline"
+          >
+            Criar uma conta
+          </button>
+        </div>
       </div>
     </div>
   );
 }
-
